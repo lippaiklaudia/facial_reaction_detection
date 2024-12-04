@@ -1,6 +1,7 @@
-import argparse
-from src.data_preprocessing import load_data
+import sys
+import os
 from src.train_model import train_model
+from src.data_preprocessing import load_data
 
 def main(task):
     data_dir = "data/fer2013"
@@ -19,6 +20,7 @@ def main(task):
         print(f"Ismeretlen task: {task}")
 
 if __name__ == "__main__":
+    import argparse
     parser = argparse.ArgumentParser(description="FER2013 érzelemfelismerő rendszer.")
     parser.add_argument(
         "task",
@@ -29,3 +31,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     main(args.task)
+
