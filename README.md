@@ -1,4 +1,5 @@
 # FER2013 7 alapérzelem tanítása, TODO: tesztelés
+
 project_root/
 │
 ├── data/
@@ -15,7 +16,6 @@ project_root/
 │   ├── data_preprocessing.py  # Adatok betöltése és előfeldolgozása
 │
 └── fer_train_test.py    # Futtató fájl tanításhoz (tesztelést még nem tartalmaz)
-
 
 # FER2013:
 fer2013/
@@ -35,4 +35,5 @@ fer2013/
 │   ├── sad/
 │   ├── surprise/
 │   ├── neutral/
+
 
