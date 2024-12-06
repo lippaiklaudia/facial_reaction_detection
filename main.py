@@ -2,7 +2,7 @@ import cv2
 import dlib
 from deepface import DeepFace
 
-def real_time_emotion_detection(camera_index=0):
+def real_time_emotion_detection(camera_index):
     """
     Valós idejű érzelemfelismerés webkamera használatával.
     :param camera_index: A kamera indexe. Alapértelmezett: 0.
