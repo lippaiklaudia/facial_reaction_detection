@@ -2,7 +2,7 @@ import cv2
 import mediapipe as mp
 from deepface import DeepFace
 
-def real_time_landmark_emotion_detection(camera_index=1, analysis_frequency=10):
+def real_time_landmark_emotion_detection(camera_index=0, analysis_frequency=10):
     """
     Valós idejű arcfelismerés landmark pontokkal és érzelemfelismeréssel.
     :param camera_index: A kamera indexe. Alapértelmezett: 0, DE! van, hogy 1 TODO a telefon is szinkronizálva van és van, hogy az a 0.
