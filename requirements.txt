@@ -8,3 +8,9 @@ torch
 torchvision
 opencv-python
 scikit-learn
+opencv-python
+dlib
+imutils
+numpy
+tensorflow
+matplotlib
