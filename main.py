@@ -5,7 +5,7 @@ import numpy as np
 import time
 import csv
 from PySide6.QtWidgets import (QApplication, QLabel, QMainWindow, QVBoxLayout, QHBoxLayout,
-                               QWidget, QTextEdit, QPushButton, QMessageBox)
+                               QWidget, QTextEdit, QPushButton)
 from PySide6.QtGui import QPixmap, QImage, QFont
 from PySide6.QtCore import QTimer, Qt, QUrl
 from PySide6.QtMultimedia import QSoundEffect
@@ -17,11 +17,12 @@ from keras._tf_keras.keras.models import load_model
 # Import útvonal bővítés
 sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 
-from modules.detection.face_detection import detect_faces
-from modules.detection.landmarks import get_landmarks, draw_landmarks
-from modules.analysis.eye_analysis import calculate_ear
-from modules.ml.preprocessing import preprocess_face_for_model
-from modules.analysis.color_analysis import analyze_color_with_histogram
+from modules.detection.face_detection import *
+from modules.detection.landmarks import *
+from modules.analysis.eye_analysis import *
+from modules.analysis.color_analysis import *
+from modules.analysis.eye_tracker import *
+from modules.ml.preprocessing import *
 
 class FacialMonitor(QMainWindow):
     def __init__(self):
@@ -29,7 +30,7 @@ class FacialMonitor(QMainWindow):
         self.setWindowTitle("Real-Time Fatigue Detection")
         self.setGeometry(100, 100, 1000, 700)
 
-        self.cap = cv2.VideoCapture(0)
+        self.cap = cv2.VideoCapture(1)
         self.model = load_model("models/drowsiness_detector.h5")
 
         # Állapotváltozók
@@ -37,8 +38,10 @@ class FacialMonitor(QMainWindow):
         self.fatigue_frames = 0
         self.blink_count = 0
         self.ear_threshold = 0.2
+        self.mar_threshold = 0.6
         self.blink_start_frame = None
         self.blink_detected = False
+        self.drowsy_state = False
         self.last_log_time = time.time()
         self.detection_active = False
         self.csv_log = []
@@ -47,7 +50,10 @@ class FacialMonitor(QMainWindow):
 
         # Hangjelzés
         self.sound = QSoundEffect()
-        self.sound.setSource(QUrl.fromLocalFile("alert.wav"))  # Helyezz ide egy alert.wav hangfájlt
+        alert_path = os.path.abspath("assets/alert.wav")
+        self.sound.setSource(QUrl.fromLocalFile(alert_path))
+        self.sound.setLoopCount(-1)  # végtelen ciklus
+        self.sound.setVolume(1.0)
 
         # UI elemek
         self.video_label = QLabel("Camera feed loading...")
@@ -72,6 +78,9 @@ class FacialMonitor(QMainWindow):
 
         self.recalibrate_button = QPushButton("Recalibrate EAR")
         self.recalibrate_button.clicked.connect(self.recalibrate_ear)
+
+        self.last_sound_play = time.time()
+        self.sound_restart_interval = 2  # másodpercenként újraindítjuk
 
         button_layout = QHBoxLayout()
         button_layout.addWidget(self.start_button)
@@ -130,6 +139,18 @@ class FacialMonitor(QMainWindow):
         self.start_button.setEnabled(True)
         self.stop_button.setEnabled(False)
         self.status_label.setText("Detection stopped.")
+        self.sound.stop()
+
+    def save_screenshot(self, frame):
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        screenshot_dir = os.path.join(base_dir, "logs", "screenshots")
+        os.makedirs(screenshot_dir, exist_ok=True)
+
+        filename = f"drowsy_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+        filepath = os.path.join(screenshot_dir, filename)
+
+        cv2.imwrite(filepath, frame)
+        self.log.append(f"[INFO] Screenshot saved: {filepath}")
 
     def update_frame(self):
         ret, frame = self.cap.read()
@@ -138,9 +159,22 @@ class FacialMonitor(QMainWindow):
 
         if self.detection_active:
             frame, overall_status = self.analyze_frame(frame)
-            if overall_status == "Drowsy" and not self.sound.isPlaying():
-                self.sound.play()
-                self.show_alert("Fatigue detected!", "A fáradtság jeleit észleltük!")
+
+            if overall_status == "Drowsy":
+                now = time.time()
+                if not self.drowsy_state:
+                    self.drowsy_state = True
+                    self.sound.play()
+                    self.save_screenshot(frame)
+                    self.last_sound_play = now
+                elif now - self.last_sound_play >= self.sound_restart_interval:
+                    self.sound.stop()
+                    self.sound.play()
+                    self.last_sound_play = now
+            else:
+                if self.drowsy_state:
+                    self.drowsy_state = False
+                    self.sound.stop()
 
         self.display_image(frame)
 
@@ -179,6 +213,10 @@ class FacialMonitor(QMainWindow):
                 avg_ear = (left_ear + right_ear) / 2.0
                 self.ear_history.append(avg_ear)
 
+                mouth = landmarks[0][60:68]
+                mar = calculate_mar(mouth)
+                self.log.append(f"[DEBUG] EAR: {avg_ear:.3f}, MAR: {mar:.3f}")
+
                 avg_ear_window = np.mean(self.ear_history) if self.ear_history else 1.0
 
                 if avg_ear_window < self.ear_threshold:
@@ -204,6 +242,7 @@ class FacialMonitor(QMainWindow):
                 else:
                     is_drowsy = (self.fatigue_frames > FATIGUE_THRESHOLD or
                                  (model_label == "Drowsy" and avg_ear_window < self.ear_threshold) or
+                                 (mar > self.mar_threshold) or
                                  skin_status == "Fatigue")
                     if is_drowsy:
                         self.fatigue_frames = min(FATIGUE_THRESHOLD + 5, self.fatigue_frames + 1)
@@ -244,12 +283,21 @@ class FacialMonitor(QMainWindow):
         msg.exec()
 
     def export_log(self):
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        logs_dir = os.path.join(base_dir, "logs")
+        os.makedirs(logs_dir, exist_ok=True)
+
         filename = f"fatigue_log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
-        with open(filename, mode='w', newline='') as file:
+        filepath = os.path.join(logs_dir, filename)
+
+        with open(filepath, mode='w', newline='') as file:
             writer = csv.writer(file)
             writer.writerow(["Timestamp", "Eye Status", "Skin Status", "Model Prediction", "Overall Status"])
             writer.writerows(self.csv_log)
-        self.log.append(f"[INFO] Log exported to {filename}")
+
+        self.log.append(f"[INFO] Log exported to {filepath}")
+
+
 
 
 if __name__ == "__main__":
