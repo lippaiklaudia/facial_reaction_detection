@@ -3,8 +3,8 @@ from cnn_model import create_cnn_model
 from sklearn.metrics import classification_report, confusion_matrix
 import numpy as np
 
-train_dir = "data/train"
-test_dir = "data/test"
+train_dir = "data/drowsy_data_set/train"
+test_dir = "data/drowsy_data_set/test"
 
 train_ds = tf.keras.preprocessing.image_dataset_from_directory(
     train_dir,
@@ -26,9 +26,10 @@ data_augmentation = tf.keras.Sequential([
     tf.keras.layers.RandomFlip("horizontal"),
     tf.keras.layers.RandomRotation(0.2),
     tf.keras.layers.RandomZoom(0.1),
-    tf.keras.layers.RandomBrightness(0.3),
-    tf.keras.layers.RandomContrast(0.3),
     tf.keras.layers.RandomTranslation(0.1, 0.1),
+    tf.keras.layers.RandomBrightness(0.1),
+    tf.keras.layers.RandomContrast(0.1),
+    tf.keras.layers.GaussianNoise(0.05)
 ])
 
 # adatbovites + normalizalas
@@ -62,21 +63,28 @@ class TrainingMonitor(tf.keras.callbacks.Callback):
         print(f"Epoch {epoch + 1}: Loss = {logs['loss']:.4f}, Accuracy = {logs['accuracy']:.4f}, "
               f"Val Loss = {logs['val_loss']:.4f}, Val Accuracy = {logs['val_accuracy']:.4f}")
 
-# modell tanitasa
-epochs = 15
+from keras._tf_keras.keras.callbacks import EarlyStopping
+
+early_stop = EarlyStopping(
+    monitor='val_loss',
+    patience=8,
+    restore_best_weights=True
+)
+
 history = model.fit(
     train_ds,
     validation_data=test_ds,
-    epochs=epochs,
-    class_weight=class_weights,  # Osztálysúlyok megadása
-    callbacks=[TrainingMonitor()]
+    epochs=40,
+    class_weight=class_weights,
+    callbacks=[TrainingMonitor(), early_stop]
 )
 
+
 # modell mentese
-model.save("models/drowsiness_detector.h5")
+model.save("models/drowsy_data_model.h5")
 
 # modell tesztelese a tesztadatokon
-model = tf.keras.models.load_model("models/drowsiness_detector.h5")
+model = tf.keras.models.load_model("models/drowsy_data_model.h5")
 
 y_true = []
 y_pred = []

@@ -31,7 +31,8 @@ class FacialMonitor(QMainWindow):
         self.setGeometry(100, 100, 1000, 700)
 
         self.cap = cv2.VideoCapture(1)
-        self.model = load_model("models/drowsiness_detector.h5")
+        #self.model = load_model("models/drowsiness_detector.h5")
+        self.model = load_model("models/drowsy_data_model.h5")
 
         # Állapotváltozók
         self.ear_history = deque(maxlen=10)
@@ -53,7 +54,7 @@ class FacialMonitor(QMainWindow):
         alert_path = os.path.abspath("assets/alert.wav")
         self.sound.setSource(QUrl.fromLocalFile(alert_path))
         self.sound.setLoopCount(-1)  # végtelen ciklus
-        self.sound.setVolume(1.0)
+        self.sound.setVolume(0) #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         # UI elemek
         self.video_label = QLabel("Camera feed loading...")
@@ -235,7 +236,7 @@ class FacialMonitor(QMainWindow):
 
                 processed = preprocess_face_for_model(face_roi)
                 prediction = self.model.predict(processed, verbose=0)[0][0]
-                model_label = "Drowsy" if prediction >= 0.28 else "Awake"
+                model_label = "Drowsy" if prediction >= 0.68 else "Awake"
 
                 if avg_ear_window >= self.ear_threshold and skin_status == "Normal":
                     overall_status = "Awake"
