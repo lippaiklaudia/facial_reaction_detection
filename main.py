@@ -236,7 +236,10 @@ class FacialMonitor(QMainWindow):
 
                 processed = preprocess_face_for_model(face_roi)
                 prediction = self.model.predict(processed, verbose=0)[0][0]
-                model_label = "Drowsy" if prediction >= 0.68 else "Awake"
+                self.log.append(f"[DEBUG] ML prediction: {prediction:.3f}")
+                self.log.verticalScrollBar().setValue(self.log.verticalScrollBar().maximum())
+
+                model_label = "Drowsy" if prediction >= 0.28 else "Awake"
 
                 if avg_ear_window >= self.ear_threshold and skin_status == "Normal":
                     overall_status = "Awake"

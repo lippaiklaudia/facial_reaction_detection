@@ -11,21 +11,19 @@ def calculate_ear(eye):
     return ear
 
 def calculate_mar(mouth):
-    # Szájjellemző pontok NumPy tömbbé alakítása
+   # Feltételezzük, hogy a 'mouth' lista 8 pontot tartalmaz a száj régiójából
+    if len(mouth) != 8:
+        raise ValueError("A 'mouth' listának 8 pontot kell tartalmaznia.")
+
+    # NumPy tömbbé alakítás
     mouth = np.array(mouth)
 
     # Vertikális távolságok kiszámítása
-    A = np.linalg.norm(mouth[50] - mouth[58])  # 51 - 59
-    B = np.linalg.norm(mouth[51] - mouth[57])  # 52 - 58
-    C = np.linalg.norm(mouth[52] - mouth[56])  # 53 - 57
-    D = np.linalg.norm(mouth[53] - mouth[55])  # 54 - 56
-    E = np.linalg.norm(mouth[54] - mouth[54])  # 55 - 55
-
-    # Horizontális távolság kiszámítása
-    F = np.linalg.norm(mouth[48] - mouth[54])  # 49 - 55
+    A = np.linalg.norm(mouth[1] - mouth[5])  # 61 - 67
+    B = np.linalg.norm(mouth[2] - mouth[4])  # 62 - 66
+    C = np.linalg.norm(mouth[0] - mouth[3])  # 60 - 64
 
     # MAR kiszámítása
-    mar = (A + B + C + D + E) / (2.0 * F)
+    mar = (A + B) / (2.0 * C)
     return mar
-
 
