@@ -52,38 +52,7 @@ total_samples = sum(class_counts.values())
 for class_label, count in class_counts.items():
     class_weights[class_label] = total_samples / (len(class_counts) * count)
 
-print("Class Weights:", class_weights)
 
-# modell letrehozasa
-model = create_cnn_model((48, 48, 1))
-
-# tanitas monitorozasa
-class TrainingMonitor(tf.keras.callbacks.Callback):
-    def on_epoch_end(self, epoch, logs=None):
-        print(f"Epoch {epoch + 1}: Loss = {logs['loss']:.4f}, Accuracy = {logs['accuracy']:.4f}, "
-              f"Val Loss = {logs['val_loss']:.4f}, Val Accuracy = {logs['val_accuracy']:.4f}")
-
-from keras._tf_keras.keras.callbacks import EarlyStopping
-
-early_stop = EarlyStopping(
-    monitor='val_loss',
-    patience=8,
-    restore_best_weights=True
-)
-
-history = model.fit(
-    train_ds,
-    validation_data=test_ds,
-    epochs=40,
-    class_weight=class_weights,
-    callbacks=[TrainingMonitor(), early_stop]
-)
-
-
-# modell mentese
-model.save("models/drowsy_data_model.h5")
-
-# modell tesztelese a tesztadatokon
 model = tf.keras.models.load_model("models/drowsy_data_model.h5")
 
 y_true = []
