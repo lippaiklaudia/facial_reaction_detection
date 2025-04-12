@@ -19,7 +19,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 
 from modules.detection.face_detection import detect_faces
 from modules.detection.landmarks import get_landmarks, draw_landmarks
-from modules.analysis.eye_analysis import calculate_ear
+from modules.analysis.ear_mar_analysis import calculate_ear
 from modules.ml.preprocessing import preprocess_face_for_model
 from modules.analysis.color_analysis import analyze_color_with_histogram
 

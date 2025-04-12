@@ -19,7 +19,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 
 from modules.detection.face_detection import *
 from modules.detection.landmarks import *
-from modules.analysis.eye_analysis import *
+from modules.analysis.ear_mar_analysis import *
 from modules.analysis.color_analysis import *
 from modules.analysis.eye_tracker import *
 from modules.ml.preprocessing import *
