@@ -4,14 +4,12 @@ import cv2
 import numpy as np
 import time
 import csv
-from PySide6.QtWidgets import (QApplication, QLabel, QMainWindow, QVBoxLayout, QHBoxLayout,
-                               QWidget, QTextEdit, QPushButton, QMessageBox)
+from PySide6.QtWidgets import (QApplication, QLabel, QMainWindow, QVBoxLayout, QHBoxLayout, QWidget, QTextEdit, QPushButton, QMessageBox)
 from PySide6.QtGui import QPixmap, QImage, QFont
 from PySide6.QtCore import QTimer, Qt, QUrl
 from PySide6.QtMultimedia import QSoundEffect
 from collections import deque
 from datetime import datetime
-
 from keras._tf_keras.keras.models import load_model
 
 # Import útvonal bővítés
