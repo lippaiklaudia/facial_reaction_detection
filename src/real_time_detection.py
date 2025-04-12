@@ -189,5 +189,75 @@ def real_time_detection():
     cap.release()
     cv2.destroyAllWindows()
 
+# src/analysis/real_time_detection.py
+
+def analyze_frame(frame, model, ear_threshold, ear_history, fatigue_frames):
+    # Ez a függvény egyetlen képkockát elemez
+    # és visszaadja a feldolgozott állapotokat és a módosított fatigue_frames értéket
+
+    from detection.face_detection import detect_faces
+    from detection.landmarks import get_landmarks
+    from analysis.color_analysis import analyze_color_with_histogram
+    from analysis.eye_analysis import calculate_ear
+    from preprocessing import preprocess_face_for_model
+
+    faces = detect_faces(frame)
+
+    if len(faces) == 0:
+        return "No Face", "No Skin", "Unknown", fatigue_frames, frame
+
+    (x, y, w, h) = faces[0]
+    face_roi = frame[y:y+h, x:x+w]
+    landmarks = get_landmarks(face_roi)
+    mean_hue, mean_saturation, mean_value = analyze_color_with_histogram(frame, (x, y, w, h))
+
+    if mean_hue < 20 and mean_saturation < 40 and mean_value < 90:
+        skin_status = "Fatigue"
+    elif mean_hue < 30 and mean_saturation < 50 and mean_value < 120:
+        skin_status = "Possibly Fatigued"
+    else:
+        skin_status = "Normal"
+
+    eye_status = "No Data"
+    overall_status = "Awake"
+
+    if landmarks:
+        left_eye = landmarks[0][36:42]
+        right_eye = landmarks[0][42:48]
+        left_ear = calculate_ear(left_eye)
+        right_ear = calculate_ear(right_eye)
+        avg_ear = (left_ear + right_ear) / 2.0
+        ear_history.append(avg_ear)
+
+        avg_ear_window = np.mean(ear_history) if len(ear_history) > 0 else 1.0
+
+        eye_status = "Closed" if avg_ear_window < ear_threshold else "Open"
+
+        processed_face = preprocess_face_for_model(face_roi)
+        model_prediction = model.predict(processed_face, verbose=0)[0][0]
+        model_label = "Drowsy" if model_prediction >= 0.28 else "Awake"
+
+        if avg_ear_window >= ear_threshold and skin_status == "Normal":
+            overall_status = "Awake"
+        else:
+            is_drowsy = (fatigue_frames > 10 or 
+                         (model_label == "Drowsy" and avg_ear_window < ear_threshold) or 
+                         skin_status == "Fatigue")
+            if is_drowsy:
+                fatigue_frames = min(15, fatigue_frames + 1)
+            else:
+                fatigue_frames = max(0, fatigue_frames - 3)
+            overall_status = "Drowsy" if fatigue_frames > 10 else "Awake"
+
+    # Vizuális overlay
+    color = (0, 0, 255) if overall_status == "Drowsy" else (0, 255, 0)
+    cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
+    cv2.putText(frame, f"Eye: {eye_status}", (x, y - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+    cv2.putText(frame, f"Skin: {skin_status}", (x, y - 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+    cv2.putText(frame, f"Overall: {overall_status}", (x, y - 70), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+
+    return eye_status, skin_status, overall_status, fatigue_frames, frame
+
+
 if __name__ == "__main__":
     real_time_detection()
