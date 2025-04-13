@@ -20,13 +20,27 @@ class EyeTracker:
         return height / width
 
     def get_pupil_ratio(self, landmarks):
+        # Bal szem
         left_pupil = np.array([landmarks[468].x, landmarks[468].y])
-        eye_left = np.array([landmarks[33].x, landmarks[33].y])
-        eye_right = np.array([landmarks[133].x, landmarks[133].y])
-        eye_width = np.linalg.norm(eye_left - eye_right)
-        if eye_width == 0:
+        left_inner = np.array([landmarks[133].x, landmarks[133].y])   # bal szem külső sarka
+        left_outer = np.array([landmarks[33].x, landmarks[33].y])     # bal szem belső sarka
+        left_eye_width = np.linalg.norm(left_outer - left_inner)
+
+        # Jobb szem
+        right_pupil = np.array([landmarks[473].x, landmarks[473].y])
+        right_inner = np.array([landmarks[362].x, landmarks[362].y])  # jobb szem belső sarka
+        right_outer = np.array([landmarks[263].x, landmarks[263].y])  # jobb szem külső sarka
+        right_eye_width = np.linalg.norm(right_outer - right_inner)
+
+        if left_eye_width == 0 or right_eye_width == 0:
             return None
-        return 1 - (np.linalg.norm(left_pupil - eye_left) / eye_width)
+
+        left_ratio = np.linalg.norm(left_pupil - left_outer) / left_eye_width
+        right_ratio = np.linalg.norm(right_pupil - right_outer) / right_eye_width
+
+        # Átlagoljuk a két szemet
+        return (left_ratio + right_ratio) / 2
+
 
     def detect(self, frame):
         rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -38,26 +52,38 @@ class EyeTracker:
         blink_interval_stddev = None
         pupil_ratio_delta = None
 
-        if results.multi_face_landmarks:
-            face_landmarks = results.multi_face_landmarks[0]
-            landmarks = face_landmarks.landmark
-            left_eye_indices = [33, 160, 158, 133, 153, 144]
+        if not results.multi_face_landmarks:
+            return {
+                "timestamp": time.time(),
+                "ear": None,
+                "blink_detected": False,
+                "total_blinks": self.blink_count,
+                "blinks_per_minute": len(self.blinks_in_last_minute),
+                "pupil_ratio": None,
+                "blink_interval_stddev": None,
+                "pupil_ratio_delta": None,
+                "landmarks": None
+            }
 
-            left_ear = self.get_eye_aspect_ratio(landmarks, left_eye_indices)
-            pupil_ratio = self.get_pupil_ratio(landmarks)
+        face_landmarks = results.multi_face_landmarks[0]
+        landmarks = face_landmarks.landmark
+        left_eye_indices = [33, 160, 158, 133, 153, 144]
 
-            if pupil_ratio:
-                self.pupil_ratios_last_minute.append((time.time(), pupil_ratio))
+        left_ear = self.get_eye_aspect_ratio(landmarks, left_eye_indices)
+        pupil_ratio = self.get_pupil_ratio(landmarks)
 
-            if left_ear < 0.20:
-                if not self.eye_closed:
-                    self.blink_count += 1
-                    blink_detected = True
-                    self.prev_blink_time = time.time()
-                    self.blinks_in_last_minute.append(self.prev_blink_time)
-                    self.eye_closed = True
-            else:
-                self.eye_closed = False
+        if pupil_ratio:
+            self.pupil_ratios_last_minute.append((time.time(), pupil_ratio))
+
+        if left_ear < 0.20:
+            if not self.eye_closed:
+                self.blink_count += 1
+                blink_detected = True
+                self.prev_blink_time = time.time()
+                self.blinks_in_last_minute.append(self.prev_blink_time)
+                self.eye_closed = True
+        else:
+            self.eye_closed = False
 
         current_time = time.time()
         self.blinks_in_last_minute = [t for t in self.blinks_in_last_minute if current_time - t <= 60]
@@ -79,5 +105,6 @@ class EyeTracker:
             "blinks_per_minute": len(self.blinks_in_last_minute),
             "pupil_ratio": pupil_ratio,
             "blink_interval_stddev": blink_interval_stddev,
-            "pupil_ratio_delta": pupil_ratio_delta
+            "pupil_ratio_delta": pupil_ratio_delta,
+            "landmarks": face_landmarks.landmark 
         }
