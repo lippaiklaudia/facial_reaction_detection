@@ -1,5 +1,6 @@
 import sys
 import os
+from tkinter import messagebox
 import cv2
 import numpy as np
 import time
@@ -280,8 +281,8 @@ class FacialMonitor(QMainWindow):
         self.video_label.setPixmap(pixmap)
 
     def show_alert(self, title, message):
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Warning)
+        msg = messagebox()
+        msg.setIcon(messagebox.Warning)
         msg.setWindowTitle(title)
         msg.setText(message)
         msg.exec()
