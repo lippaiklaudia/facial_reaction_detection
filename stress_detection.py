@@ -28,6 +28,29 @@ STRESS_AU_WEIGHTS = {
     "AU17_r": 0.7
 }
 
+def compute_stress_probability(blink_std, pupil_delta, gaze_instability, au_values):
+    probs = []
+
+    if blink_std > 2.0:
+        probs.append(0.6)
+    if pupil_delta > 0.25:
+        probs.append(0.5)
+    if gaze_instability > 3.5:
+        probs.append(0.4)
+
+    # AU komponensekhez rendelés
+    if au_values.get("AU04_r", 0.0) > 1.0:
+        probs.append(0.65)
+    if au_values.get("AU07_r", 0.0) > 0.6:
+        probs.append(0.85)
+    if au_values.get("AU17_r", 0.0) > 0.4:
+        probs.append(0.50)
+
+    if probs:
+        return sum(probs) / len(probs)
+    else:
+        return 0.0
+
 class StressDetectionApp(QWidget):
     def __init__(self):
         super().__init__()
@@ -100,7 +123,7 @@ class StressDetectionApp(QWidget):
 
         self.openface_process = subprocess.Popen([
             "/Users/lippaiklaudia/git/OpenFace/build/bin/FeatureExtraction",
-            "-device", "0",
+            "-device", "1",
             "-aus",
             "-of", self.output_csv_path
         ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -156,7 +179,7 @@ class StressDetectionApp(QWidget):
             time.sleep(0.3)
 
     def start_camera(self):
-        self.cap = cv2.VideoCapture(0)
+        self.cap = cv2.VideoCapture(1)
         self.timer.start(30)
 
     def stop_camera(self):
@@ -218,20 +241,15 @@ class StressDetectionApp(QWidget):
             if au_val > threshold:
                 au_stress_points += STRESS_AU_WEIGHTS.get(au_name, 1.0)
 
-        # --- Új trigger alapú stressz score ---
-        triggers = [
-            blink_std > 2.0,
-            pupil_delta > 0.25,
-            gaze_instability > 0.015,
-            au_score > 0.45 or au_stress_points >= 1.5
-        ]
-        stress_score = sum(triggers)
+        stress_prob = compute_stress_probability(blink_std, pupil_delta, self.gaze_instability, au_values)
+        stress_score = round(stress_prob * 4)  # skálázás 0–4-ig, a régi GUI-kompatibilitás miatt
+
 
         # Visszacsökkentés, ha minden metrika nyugalmi szinten van
         if blink_std < 1.0 and pupil_delta < 0.12 and gaze_instability < 0.008 and au_score < 0.2 and au_stress_points == 0:
             stress_score = max(stress_score - 1, 0)
 
-        self.stress_score_window.append((current_time, stress_score))
+        self.stress_score_window.append((current_time, stress_prob))
         self.stress_score_window = deque([(t, s) for t, s in self.stress_score_window if current_time - t <= 60])
         avg_stress = sum(s for t, s in self.stress_score_window) / len(self.stress_score_window)
 
@@ -241,7 +259,7 @@ class StressDetectionApp(QWidget):
         self.pupil_delta_label.setText(f"Pupil Delta: {pupil_delta:.2f}")
         self.gaze_instability_label.setText(f"Gaze Instability: {gaze_instability:.3f} (STD)")
         self.au_label.setText(f"AU Score: {au_score:.2f} | AU stress: {au_stress_points:.1f}")
-        self.stress_score_label.setText(f"Stress Score: {stress_score}")
+        self.stress_score_label.setText(f"Stress Probability: {stress_prob:.2f} → Score: {stress_score}")
 
         rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
@@ -256,9 +274,10 @@ class StressDetectionApp(QWidget):
         qt_image = QImage(rgb_image.data, rgb_image.shape[1], rgb_image.shape[0], QImage.Format_RGB888)
         self.image_label.setPixmap(QPixmap.fromImage(qt_image))
 
-        if avg_stress >= 2.0 and current_time - self.last_alert_time > self.alert_interval:
-            self.show_timed_alert("A rendszer fokozott stresszszintet észlelt. Javasolt rövid szünetet tartani.")
-            self.last_alert_time = current_time
+        avg_stress = sum(s for t, s in self.stress_score_window) / len(self.stress_score_window)
+        if avg_stress >= 0.6 and current_time - self.last_alert_time > self.alert_interval:
+            self.show_timed_alert("A rendszer fokozott stresszvalószínűséget észlelt. Javasolt rövid szünetet tartani.")
+
 
         self.frame_counter += 1
         with open(self.log_path, mode='a', newline='') as f:
