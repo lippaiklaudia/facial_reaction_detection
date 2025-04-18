@@ -55,7 +55,7 @@ class FacialMonitor(QMainWindow):
         alert_path = os.path.abspath("assets/alert.wav")
         self.sound.setSource(QUrl.fromLocalFile(alert_path))
         self.sound.setLoopCount(-1)  # végtelen ciklus
-        self.sound.setVolume(0) #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        #self.sound.setVolume(1) #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         # UI elemek
         self.video_label = QLabel("Camera feed loading...")
