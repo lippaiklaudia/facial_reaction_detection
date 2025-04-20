@@ -23,11 +23,13 @@ Custom image/video input for real-time analysis
 
 **⚙️ Installation**
 
+
 **Clone the repository:**
 
 git clone https://github.com/lippaiklaudia/facial_reaction_detection.git
 
 cd facial_reaction_detection
+
 
 **Create and activate a virtual environment:**
 
@@ -35,11 +37,13 @@ python -m venv venv
 
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
+
 **Install requirements:**
 
 pip install -r requirements.txt
 
 (Optional) Install and build OpenFace for AU detection.
+
 
 **▶️ Usage**
 
