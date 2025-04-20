@@ -12,7 +12,7 @@ This project aims to develop a real-time facial analysis system capable of recog
 All components are integrated into a modular GUI for real-time visualization and logging.
 
 ## Project Structure
-(structure.png)
+![Alt szöveg](structure.png)
 
 Used datasets
 Driver Drowsiness Dataset (Ismail Nasri, Kaggle)
