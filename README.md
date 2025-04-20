@@ -16,7 +16,9 @@ All components are integrated into a modular GUI for real-time visualization and
 
 **Used datasets**
 Driver Drowsiness Dataset (Ismail Nasri, Kaggle)
+
 FER2013 (for emotion recognition preprocessing – optional module)
+
 Custom image/video input for real-time analysis
 
 **⚙️ Installation**
@@ -51,18 +53,26 @@ python stress_detection.py
 
 **Ensure that:**
 A webcam is connected
+
 OpenFace's FeatureExtraction tool is accessible via system PATH (or configured in config.py)
 
 **📈 Features**
 Real-time EAR, MAR, blink analysis
+
 Gaze tracking with MediaPipe
+
 Action Unit detection using OpenFace
+
 PyQt GUI with live status indicators and signal plots
+
 Automatic alerting and logging to CSV
+
 Configurable thresholds and model integration
 
 **Future Work**
 
 Machine learning-based stress score estimation (SVM/Random Forest)
+
 Multi-angle detection support
+
 Real-time dashboard enhancements
