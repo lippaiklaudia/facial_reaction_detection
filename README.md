@@ -14,49 +14,69 @@ All components are integrated into a modular GUI for real-time visualization and
 ## Project Structure
 ![Alt szöveg](structure.png)
 
-Used datasets
+**Used datasets**
 Driver Drowsiness Dataset (Ismail Nasri, Kaggle)
+
 FER2013 (for emotion recognition preprocessing – optional module)
+
 Custom image/video input for real-time analysis
 
-⚙️ Installation
+**⚙️ Installation**
 
-Clone the repository:
+
+**Clone the repository:**
+
 git clone https://github.com/lippaiklaudia/facial_reaction_detection.git
+
 cd facial_reaction_detection
 
-Create and activate a virtual environment:
+
+**Create and activate a virtual environment:**
+
 python -m venv venv
+
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-Install requirements:
+
+**Install requirements:**
+
 pip install -r requirements.txt
+
 (Optional) Install and build OpenFace for AU detection.
 
-▶️ Usage
 
-Drowsiness Detection
+**▶️ Usage**
+
+**Drowsiness Detection**
 
 python drowsiness_detection.py
 
-Stress Detection
+**Stress Detection**
 
 python stress_detection.py
 
-Ensure that:
+**Ensure that:**
 A webcam is connected
+
 OpenFace's FeatureExtraction tool is accessible via system PATH (or configured in config.py)
 
-📈 Features
+**📈 Features**
 Real-time EAR, MAR, blink analysis
+
 Gaze tracking with MediaPipe
+
 Action Unit detection using OpenFace
+
 PyQt GUI with live status indicators and signal plots
+
 Automatic alerting and logging to CSV
+
 Configurable thresholds and model integration
 
-Future Work
+**Future Work**
 
 Machine learning-based stress score estimation (SVM/Random Forest)
+
 Multi-angle detection support
+
 Real-time dashboard enhancements
