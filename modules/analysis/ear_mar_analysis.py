@@ -11,7 +11,6 @@ def calculate_ear(eye):
     return ear
 
 def calculate_mar(mouth):
-   # Feltételezzük, hogy a 'mouth' lista 8 pontot tartalmaz a száj régiójából
     if len(mouth) != 8:
         raise ValueError("A 'mouth' listának 8 pontot kell tartalmaznia.")
 

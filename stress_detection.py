@@ -242,7 +242,7 @@ class StressDetectionApp(QWidget):
                 au_stress_points += STRESS_AU_WEIGHTS.get(au_name, 1.0)
 
         stress_prob = compute_stress_probability(blink_std, pupil_delta, self.gaze_instability, au_values)
-        stress_score = round(stress_prob * 4)  # skálázás 0–4-ig, a régi GUI-kompatibilitás miatt
+        stress_score = round(stress_prob * 4)  # skálázás 0–4-ig
 
 
         # Visszacsökkentés, ha minden metrika nyugalmi szinten van
