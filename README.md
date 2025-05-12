@@ -20,80 +20,54 @@ All components are integrated into a modular GUI for real-time visualization and
 **Used datasets**
 
 
-Driver Drowsiness Dataset (Ismail Nasri, Kaggle)
-
-FER2013 (for emotion recognition preprocessing – optional module)
-
-Custom image/video input for real-time analysis
+- Driver Drowsiness Dataset (Ismail Nasri, Kaggle)
+- FER2013 (for emotion recognition preprocessing – optional module)
+- Custom image/video input for real-time analysis
 
 
 **⚙️ Installation**
 
 
 **Clone the repository:**
-
-
-git clone https://github.com/lippaiklaudia/facial_reaction_detection.git
-
-cd facial_reaction_detection
+- git clone https://github.com/lippaiklaudia/facial_reaction_detection.git
+- cd facial_reaction_detection
 
 
 **Create and activate a virtual environment:**
-
-
-python -m venv venv
-
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+- python -m venv venv
+- source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 
 **Install requirements:**
-
-
-pip install -r requirements.txt
-
-(Optional) Install and build OpenFace for AU detection.
+- pip install -r requirements.txt
+- (Optional) Install and build OpenFace for AU detection.
 
 
 **▶️ Usage**
 
 
 **Drowsiness Detection**
-
-python drowsiness_detection.py
+- python drowsiness_detection.py
 
 
 **Stress Detection**
-
-
-python stress_detection.py
+- python stress_detection.py
 
 **Ensure that:**
-A webcam is connected
-
-OpenFace's FeatureExtraction tool is accessible via system PATH (or configured in config.py)
+- A webcam is connected
+- OpenFace's FeatureExtraction tool is accessible via system PATH (or configured in config.py)
 
 
 **📈 Features**
-
-
-Real-time EAR, MAR, blink analysis
-
-Gaze tracking with MediaPipe
-
-Action Unit detection using OpenFace
-
-PyQt GUI with live status indicators and signal plots
-
-Automatic alerting and logging to CSV
-
-Configurable thresholds and model integration
+- Real-time EAR, MAR, blink analysis
+- Gaze tracking with MediaPipe
+- Action Unit detection using OpenFace
+- PyQt GUI with live status indicators and signal plots
+- Automatic alerting and logging to CSV
+- Configurable thresholds and model integration
 
 
 **Future Work**
-
-
-Machine learning-based stress score estimation (SVM/Random Forest)
-
-Multi-angle detection support
-
-Real-time dashboard enhancements
+- Machine learning-based stress score estimation (SVM/Random Forest)
+- Multi-angle detection support
+- Real-time dashboard enhancements
