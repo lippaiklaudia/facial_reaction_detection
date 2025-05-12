@@ -7,7 +7,6 @@ from keras._tf_keras.keras.utils import to_categorical
 import cv2
 from sklearn.model_selection import train_test_split
 
-# Adatforrás
 base_dir = "data/drowsiness_processed"
 categories = ["Closed", "Open", "yawn", "no_yawn"]
 img_size = 64
@@ -53,7 +52,6 @@ model = Sequential([
 
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-# Adatbővítés
 datagen = ImageDataGenerator(
     rotation_range=20,
     zoom_range=0.2,

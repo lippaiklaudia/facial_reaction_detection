@@ -2,17 +2,12 @@ import cv2
 import mediapipe as mp
 from deepface import DeepFace
 
-def real_time_landmark_emotion_detection(camera_index=0, analysis_frequency=10):
-    """
-    Valós idejű arcfelismerés landmark pontokkal és érzelemfelismeréssel.
-    :param camera_index: A kamera indexe. Alapértelmezett: 0, DE! van, hogy 1 TODO a telefon is szinkronizálva van és van, hogy az a 0.
-    :param analysis_frequency: Hány képkockánként végezzen érzelemfelismerést.
-    """
+def real_time_landmark_emotion_detection(camera_index=1, analysis_frequency=10):
+
     # Mediapipe arcfelismerés inicializálása
     mp_face_mesh = mp.solutions.face_mesh
     face_mesh = mp_face_mesh.FaceMesh(static_image_mode=False, max_num_faces=5, min_detection_confidence=0.5)
 
-    # Mediapipe rajzolási funkciók inicializálása
     mp_drawing = mp.solutions.drawing_utils
     mp_drawing_styles = mp.solutions.drawing_styles
 
@@ -33,7 +28,6 @@ def real_time_landmark_emotion_detection(camera_index=0, analysis_frequency=10):
             print("Nem sikerült képkockát olvasni.")
             break
 
-        # Mediapipe arcfelismerés RGB-ben működik
         rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = face_mesh.process(rgb_frame)
 
@@ -54,7 +48,6 @@ def real_time_landmark_emotion_detection(camera_index=0, analysis_frequency=10):
                 x_max = int(max([landmark.x for landmark in face_landmarks.landmark]) * w)
                 y_max = int(max([landmark.y for landmark in face_landmarks.landmark]) * h)
 
-                # Csak minden 'analysis_frequency'-edik képkockát elemzünk
                 if frame_count % analysis_frequency == 0:
                     try:
                         # Arc kivágása érzelemfelismeréshez
@@ -82,7 +75,6 @@ def real_time_landmark_emotion_detection(camera_index=0, analysis_frequency=10):
         cv2.imshow("Landmark and Emotion Detection", frame)
         frame_count += 1  # Növeld a képkocka számlálót
 
-        # Kilépés 'q' gomb megnyomásával
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 

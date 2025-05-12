@@ -2,14 +2,14 @@ from concurrent.futures import ThreadPoolExecutor
 import cv2
 import numpy as np
 from collections import deque
-from detection.face_detection import detect_faces
-from detection.landmarks import get_landmarks
+from modules.detection.face_detection import detect_faces
+from modules.detection.landmarks import get_landmarks
 from keras._tf_keras.keras.models import load_model
 import time
-from preprocessing import preprocess_face_for_model
-from analysis.color_analysis import analyze_color_with_histogram
-from analysis.eye_analysis import calculate_ear
-from detection.landmarks import draw_landmarks
+from modules.ml.preprocessing import preprocess_face_for_model
+from modules.analysis.color_analysis import analyze_color_with_histogram
+from modules.analysis.ear_mar_analysis import calculate_ear
+from modules.detection.landmarks import draw_landmarks
 
 model = load_model("models/drowsiness_detector.h5")
 
@@ -192,14 +192,12 @@ def real_time_detection():
 # src/analysis/real_time_detection.py
 
 def analyze_frame(frame, model, ear_threshold, ear_history, fatigue_frames):
-    # Ez a függvény egyetlen képkockát elemez
-    # és visszaadja a feldolgozott állapotokat és a módosított fatigue_frames értéket
 
-    from detection.face_detection import detect_faces
-    from detection.landmarks import get_landmarks
-    from analysis.color_analysis import analyze_color_with_histogram
-    from analysis.eye_analysis import calculate_ear
-    from preprocessing import preprocess_face_for_model
+    from modules.detection.face_detection import detect_faces
+    from modules.detection.landmarks import get_landmarks
+    from modules.analysis.color_analysis import analyze_color_with_histogram
+    from modules.analysis.ear_mar_analysis import calculate_ear
+    from modules.ml.preprocessing import preprocess_face_for_model
 
     faces = detect_faces(frame)
 

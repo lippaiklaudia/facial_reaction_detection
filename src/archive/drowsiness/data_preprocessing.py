@@ -2,11 +2,10 @@ import os
 import cv2
 import numpy as np
 
-# Adatforrás mappák
 base_dir = "data/drowsiness"
 output_dir = "data/drowsiness_processed"
 categories = ["Closed", "Open", "yawn", "no_yawn"]
-img_size = 64  # Méretre hozás (64x64 pixel)
+img_size = 64 
 
 # Adatok előfeldolgozása
 def preprocess_and_save_images(base_dir, output_dir, categories, img_size):

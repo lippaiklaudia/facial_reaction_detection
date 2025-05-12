@@ -11,7 +11,6 @@ categories = ["Closed", "Open", "yawn", "no_yawn"]
 face_detector = dlib.get_frontal_face_detector()
 landmark_predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 
-# Funkció az arckép kivágására a szemek környékén
 def extract_eye_region(face_landmarks, gray_frame, eye_indices):
     points = [face_landmarks.part(i) for i in eye_indices]
     x_min = min(point.x for point in points)
@@ -44,7 +43,6 @@ while True:
         right_eye = extract_eye_region(landmarks, gray, range(42, 48))
         mouth = extract_eye_region(landmarks, gray, range(48, 68))
 
-        # Modell input előkészítése (szemek és száj kombinációja)
         inputs = np.array([
             np.expand_dims(left_eye, axis=-1),
             np.expand_dims(right_eye, axis=-1),
@@ -56,24 +54,20 @@ while True:
         prediction = model.predict(inputs)
         class_idx = np.argmax(prediction)
 
-        # Ellenőrzés, hogy az index érvényes-e
         if class_idx < len(categories):
             label = categories[class_idx]
         else:
             label = "Unknown"
 
-        # Keret rajzolása az arc köré
         x, y, w, h = (face.left(), face.top(), face.width(), face.height())
         color = (0, 255, 0) if label in ["Open", "no_yawn"] else (0, 0, 255)
         cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
 
-        # Szöveg kiírása
         cv2.putText(frame, label, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, color, 2)
 
     # Élőkép megjelenítése
     cv2.imshow("Drowsiness Detection", frame)
 
-    # Kilépés "q" billentyűre
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 

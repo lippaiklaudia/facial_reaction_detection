@@ -55,7 +55,7 @@ class FacialMonitor(QMainWindow):
         alert_path = os.path.abspath("assets/alert.wav")
         self.sound.setSource(QUrl.fromLocalFile(alert_path))
         self.sound.setLoopCount(-1)  # végtelen ciklus
-        #self.sound.setVolume(1) #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        self.sound.setVolume(3) 
 
         # UI elemek
         self.video_label = QLabel("Camera feed loading...")
@@ -82,7 +82,7 @@ class FacialMonitor(QMainWindow):
         self.recalibrate_button.clicked.connect(self.recalibrate_ear)
 
         self.last_sound_play = time.time()
-        self.sound_restart_interval = 2  # másodpercenként újraindítjuk
+        self.sound_restart_interval = 2  # másodpercenként újraindítás
 
         button_layout = QHBoxLayout()
         button_layout.addWidget(self.start_button)

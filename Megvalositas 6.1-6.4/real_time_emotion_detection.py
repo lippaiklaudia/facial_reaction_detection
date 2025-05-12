@@ -3,11 +3,7 @@ import dlib
 from deepface import DeepFace
 
 def real_time_emotion_detection_with_dlib(camera_index=0):
-    """
-    Valós idejű érzelemfelismerés dlib és DeepFace segítségével.
 
-    :param camera_index: Az elérendő kamera indexe. Alapértelmezett: 0 (első kamera).
-    """
     # Dlib arcdetektor inicializálása
     detector = dlib.get_frontal_face_detector()
 
@@ -21,7 +17,7 @@ def real_time_emotion_detection_with_dlib(camera_index=0):
     print("Nyomj 'q'-t a kilépéshez.")
 
     while True:
-        # Egy frame olvasása a webkamerából
+        # Frame olvasása a webkamerából
         ret, frame = cap.read()
 
         if not ret:
@@ -37,8 +33,6 @@ def real_time_emotion_detection_with_dlib(camera_index=0):
         for face in faces:
             # Arc koordináták kinyerése
             x, y, w, h = face.left(), face.top(), face.width(), face.height()
-
-            # Győződjünk meg róla, hogy az arc koordinátái nem lépnek túl a képkockán
             if x < 0 or y < 0 or x + w > frame.shape[1] or y + h > frame.shape[0]:
                 continue
 
@@ -52,10 +46,9 @@ def real_time_emotion_detection_with_dlib(camera_index=0):
                 # Érzelemfelismerés a kivágott és méretezett arcon
                 result = DeepFace.analyze(face_roi_resized, actions=["emotion"], enforce_detection=False)
 
-                if isinstance(result, dict):  # Egyetlen arc eredménye
+                if isinstance(result, dict):
                     dominant_emotion = result.get("dominant_emotion", "N/A")
 
-                    # Rajzoljuk ki az érzelmeket
                     cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                     cv2.putText(
                         frame,
@@ -69,25 +62,19 @@ def real_time_emotion_detection_with_dlib(camera_index=0):
             except Exception as e:
                 print(f"Hiba az érzelemfelismerésnél: {e}")
 
-        # Képkocka megjelenítése
         cv2.imshow("Real-Time Emotion Detection with Dlib", frame)
 
-        # Kilépés 'q' gomb megnyomásával
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-    # Erőforrások felszabadítása
     cap.release()
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    # Állítsd be a megfelelő kamera indexet (0 az alapértelmezett)
     real_time_emotion_detection_with_dlib(camera_index=0)
 
-
-
-
-előző main:
+""" 
+# előző main:
 
 def main(task):
     data_dir = "data/fer2013"
@@ -118,3 +105,4 @@ if __name__ == "__main__":
 
     main(args.task)
 
+ """

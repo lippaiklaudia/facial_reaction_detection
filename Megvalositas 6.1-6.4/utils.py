@@ -4,7 +4,7 @@ from keras._tf_keras.keras.preprocessing.image import ImageDataGenerator
 
 def load_data_from_directory(data_dir, target_size=(48, 48), batch_size=64):
     """
-    Betölti a FER2013 képeket a mappastruktúrából.
+    FER2013 képek betöltése a mappastruktúrából
     """
     datagen = ImageDataGenerator(rescale=1.0/255.0)
 

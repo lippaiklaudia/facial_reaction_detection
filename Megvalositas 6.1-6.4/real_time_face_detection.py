@@ -3,11 +3,7 @@ import dlib
 from deepface import DeepFace
 
 def real_time_face_and_emotion_detection(camera_index=1):
-    """
-    Valós idejű érzelemfelismerés webkamera használatával.
-    :param camera_index: A kamera indexe. Alapértelmezett: 0.
-    """
-    # Arc detektor inicializálása
+
     detector = dlib.get_frontal_face_detector()
 
     # Webkamera megnyitása
@@ -19,7 +15,7 @@ def real_time_face_and_emotion_detection(camera_index=1):
     print("Nyomj 'q'-t a kilépéshez.")
 
     while True:
-        # Képkocka beolvasása a webkamerából
+
         ret, frame = cap.read()
         if not ret:
             print("Nem sikerült képkockát olvasni.")
@@ -36,7 +32,6 @@ def real_time_face_and_emotion_detection(camera_index=1):
             if x < 0 or y < 0 or x + w > frame.shape[1] or y + h > frame.shape[0]:
                 continue
 
-            # Arc kivágása a képkeretből
             face_roi = frame[y:y + h, x:x + w]
 
             # Arc méretezése DeepFace számára
@@ -46,7 +41,6 @@ def real_time_face_and_emotion_detection(camera_index=1):
                 # Érzelemfelismerés DeepFace-szel
                 results = DeepFace.analyze(face_roi_resized, actions=["emotion"], enforce_detection=False)
 
-                # Kezeld, ha több arc eredménye van
                 if isinstance(results, list):
                     for result in results:
                         dominant_emotion = result.get("dominant_emotion", "N/A")
@@ -61,7 +55,6 @@ def real_time_face_and_emotion_detection(camera_index=1):
                             2
                         )
                 else:
-                    # Egyetlen arc eredménye
                     dominant_emotion = results.get("dominant_emotion", "N/A")
                     cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                     cv2.putText(
@@ -80,10 +73,8 @@ def real_time_face_and_emotion_detection(camera_index=1):
         # Képkocka megjelenítése
         cv2.imshow("Real-Time Emotion Detection", frame)
 
-        # Kilépés 'q' gomb megnyomásával
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-    # Erőforrások felszabadítása
     cap.release()
     cv2.destroyAllWindows()

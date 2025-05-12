@@ -1,7 +1,7 @@
 import sys
 import os
-from src.train_model import train_model
-from src.data_preprocessing import load_data
+from src.archive.emotions.train_model import train_model
+from src.archive.emotions.data_preprocessing import load_data
 
 def main(task):
     data_dir = "data/fer2013"
