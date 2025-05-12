@@ -4,6 +4,7 @@ A comprehensive real-time system for detecting various emotional and physical st
 
 ## Project Objective
 
+
 This project aims to develop a real-time facial analysis system capable of recognizing:
 - **Drowsiness** via Eye Aspect Ratio (EAR), mouth opening (MAR), and blinking detection
 - **Stress** using eye movement instability, pupil fluctuation, and facial Action Units (AUs) via OpenFace
@@ -11,72 +12,62 @@ This project aims to develop a real-time facial analysis system capable of recog
 
 All components are integrated into a modular GUI for real-time visualization and logging.
 
+
 ## Project Structure
 ![Alt szöveg](structure.png)
 
+
 **Used datasets**
-Driver Drowsiness Dataset (Ismail Nasri, Kaggle)
 
-FER2013 (for emotion recognition preprocessing – optional module)
 
-Custom image/video input for real-time analysis
+- Driver Drowsiness Dataset (Ismail Nasri, Kaggle)
+- FER2013 (for emotion recognition preprocessing – optional module)
+- Custom image/video input for real-time analysis
+
 
 **⚙️ Installation**
 
 
 **Clone the repository:**
-
-git clone https://github.com/lippaiklaudia/facial_reaction_detection.git
-
-cd facial_reaction_detection
+- git clone https://github.com/lippaiklaudia/facial_reaction_detection.git
+- cd facial_reaction_detection
 
 
 **Create and activate a virtual environment:**
-
-python -m venv venv
-
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+- python -m venv venv
+- source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 
 **Install requirements:**
-
-pip install -r requirements.txt
-
-(Optional) Install and build OpenFace for AU detection.
+- pip install -r requirements.txt
+- (Optional) Install and build OpenFace for AU detection.
 
 
 **▶️ Usage**
 
-**Drowsiness Detection**
 
-python drowsiness_detection.py
+**Drowsiness Detection**
+- python drowsiness_detection.py
+
 
 **Stress Detection**
-
-python stress_detection.py
+- python stress_detection.py
 
 **Ensure that:**
-A webcam is connected
+- A webcam is connected
+- OpenFace's FeatureExtraction tool is accessible via system PATH (or configured in config.py)
 
-OpenFace's FeatureExtraction tool is accessible via system PATH (or configured in config.py)
 
 **📈 Features**
-Real-time EAR, MAR, blink analysis
+- Real-time EAR, MAR, blink analysis
+- Gaze tracking with MediaPipe
+- Action Unit detection using OpenFace
+- PyQt GUI with live status indicators and signal plots
+- Automatic alerting and logging to CSV
+- Configurable thresholds and model integration
 
-Gaze tracking with MediaPipe
-
-Action Unit detection using OpenFace
-
-PyQt GUI with live status indicators and signal plots
-
-Automatic alerting and logging to CSV
-
-Configurable thresholds and model integration
 
 **Future Work**
-
-Machine learning-based stress score estimation (SVM/Random Forest)
-
-Multi-angle detection support
-
-Real-time dashboard enhancements
+- Machine learning-based stress score estimation (SVM/Random Forest)
+- Multi-angle detection support
+- Real-time dashboard enhancements
