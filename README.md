@@ -4,6 +4,7 @@ A comprehensive real-time system for detecting various emotional and physical st
 
 ## Project Objective
 
+
 This project aims to develop a real-time facial analysis system capable of recognizing:
 - **Drowsiness** via Eye Aspect Ratio (EAR), mouth opening (MAR), and blinking detection
 - **Stress** using eye movement instability, pupil fluctuation, and facial Action Units (AUs) via OpenFace
@@ -11,20 +12,26 @@ This project aims to develop a real-time facial analysis system capable of recog
 
 All components are integrated into a modular GUI for real-time visualization and logging.
 
+
 ## Project Structure
 ![Alt szöveg](structure.png)
 
+
 **Used datasets**
+
+
 Driver Drowsiness Dataset (Ismail Nasri, Kaggle)
 
 FER2013 (for emotion recognition preprocessing – optional module)
 
 Custom image/video input for real-time analysis
 
+
 **⚙️ Installation**
 
 
 **Clone the repository:**
+
 
 git clone https://github.com/lippaiklaudia/facial_reaction_detection.git
 
@@ -33,12 +40,14 @@ cd facial_reaction_detection
 
 **Create and activate a virtual environment:**
 
+
 python -m venv venv
 
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 
 **Install requirements:**
+
 
 pip install -r requirements.txt
 
@@ -47,11 +56,14 @@ pip install -r requirements.txt
 
 **▶️ Usage**
 
+
 **Drowsiness Detection**
 
 python drowsiness_detection.py
 
+
 **Stress Detection**
+
 
 python stress_detection.py
 
@@ -60,7 +72,10 @@ A webcam is connected
 
 OpenFace's FeatureExtraction tool is accessible via system PATH (or configured in config.py)
 
+
 **📈 Features**
+
+
 Real-time EAR, MAR, blink analysis
 
 Gaze tracking with MediaPipe
@@ -73,7 +88,9 @@ Automatic alerting and logging to CSV
 
 Configurable thresholds and model integration
 
+
 **Future Work**
+
 
 Machine learning-based stress score estimation (SVM/Random Forest)
 
