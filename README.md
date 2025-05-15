@@ -1,14 +1,13 @@
 # Facial Reaction Detection
 
-A comprehensive real-time system for detecting various emotional and physical states such as **drowsiness**, **stress**, and **fatigue** based on facial reactions. The system uses a combination of computer vision techniques (EAR, gaze tracking, facial landmarks) and machine learning models (e.g., CNN) with a PyQt-based GUI.
+A comprehensive real-time system for detecting various emotional and physical states such as **drowsiness** and **stress** based on facial reactions. The system uses a combination of computer vision techniques (EAR, gaze tracking, facial landmarks) and machine learning models (e.g., CNN) with a PyQt-based GUI.
 
 ## Project Objective
 
 
 This project aims to develop a real-time facial analysis system capable of recognizing:
-- **Drowsiness** via Eye Aspect Ratio (EAR), mouth opening (MAR), and blinking detection
+- **Drowsiness** via Eye Aspect Ratio (EAR), mouth opening (MAR), blinking detection, and a deep learning model trained on labeled datasets
 - **Stress** using eye movement instability, pupil fluctuation, and facial Action Units (AUs) via OpenFace
-- **Fatigue** using a deep learning model trained on labeled datasets
 
 All components are integrated into a modular GUI for real-time visualization and logging.
 
