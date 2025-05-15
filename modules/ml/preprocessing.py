@@ -10,7 +10,7 @@ def preprocess_with_lighting_correction(frame):
     return corrected
 
 def preprocess_face_for_model(face_roi):
-    corrected = preprocess_with_lighting_correction(face_roi)  # Lighting korrekció
+    corrected = preprocess_with_lighting_correction(face_roi)
     resized = cv2.resize(corrected, (48, 48))
     normalized = resized / 255.0
     reshaped = normalized.reshape(1, 48, 48, 1)

@@ -24,4 +24,4 @@ def use_specific_camera(camera_index):
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    use_specific_camera(0)  # Cseréld le a számítógép kamerájának indexére
+    use_specific_camera(0) 
